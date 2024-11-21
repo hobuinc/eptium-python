@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "eptium"
+version = "0.0.1"
+authors = [
+  { name="Ognyan Moore", email="ogi@hobu.co" },
+]
+description = "Eptium tools for Pythonn"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/hobuinc/eptium-python"
+Issues = "https://github.com/hobuinc/eptium-python/issues"
