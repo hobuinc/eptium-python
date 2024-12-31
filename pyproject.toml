@@ -82,5 +82,5 @@ dependencies = ["hatch-jupyter-builder>=0.8.3"]
 
 [tool.hatch.build.hooks.jupyter-builder.build-kwargs]
 path = "."
-build_cmd = "build:prod"
+build_cmd = "build"
 npm = ["jlpm"]

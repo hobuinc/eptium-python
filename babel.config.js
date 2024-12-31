@@ -8,6 +8,7 @@ module.exports = {
           node: 'current',
         },
       },
+      'minifiy': false,
     ],
   ],
 };
