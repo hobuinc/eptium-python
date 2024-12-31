@@ -31,6 +31,9 @@ module.exports = [
       libraryTarget: 'amd',
       publicPath: '',
     },
+    optimization: {
+      minimize: false
+    },
     module: {
       rules: rules
     },
