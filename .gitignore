@@ -147,9 +147,19 @@ $RECYCLE.BIN/
 **/node_modules/
 jupyter_eptium_viewer/nbextension/index.*
 
+
+# YARN
+.yarn
+
 # Coverage data
 # -------------
 **/coverage/
 
 # Packed lab extensions
 jupyter_eptium_viewer/labextension
+
+# Geospatial files
+*.las
+*.copc
+*.tif
+*.laz

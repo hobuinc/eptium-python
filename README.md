@@ -11,19 +11,36 @@ You can install using `pip`:
 pip install eptium
 ```
 
-If you are using Jupyter Notebook 5.2 or earlier, you may also need to enable
-the nbextension:
+## Usage
 
-```bash
-jupyter nbextension enable --py [--sys-prefix|--user|--system] eptium
+The following is an example on how to render data within the jupyter notebook environment
+
+```python
+import eptium
+
+w = eptium.Eptium()
+w.render("https://s3.amazonaws.com/hobu-lidar/autzen-classified.copc.laz")
+w
 ```
+
+The example above shows a remote URL to a COPC file.  Inside jupyter, this extension can also render local files relative to the notebook.  
+
+```python
+import eptium
+
+w.eptium.Eptium()
+w.render("./path/to/file.copc.laz")
+w
+```
+
+Note: the local file functionality is not present in google colab.
 
 ## Development Installation
 
 Create a dev environment:
 
 ```bash
-conda create -n eptium-dev -c conda-forge nodejs python jupyterlab=4.0.11
+conda create -n eptium-dev -c conda-forge nodejs python jupyterlab
 conda activate eptium-dev
 ```
 
