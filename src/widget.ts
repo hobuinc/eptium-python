@@ -47,6 +47,7 @@ export class EptiumView extends DOMWidgetView {
     this._iframe.width = '100%';
     this._iframe.height = '400';
     this._iframe.style.boxSizing = 'border-box';
+    this._iframe.style.border = '4px solid red';
 
     // this.el is the DOM element associated with the view
     this.el.appendChild(this._iframe);
