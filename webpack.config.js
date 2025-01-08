@@ -65,6 +65,9 @@ module.exports = [
     module: {
         rules: rules
     },
+    optimization: {
+      minimize: false,  
+    },
     externals,
     resolve,
   },
