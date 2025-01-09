@@ -1,6 +1,6 @@
 {
   "name": "eptium",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A jupyter widget to display COPC and COGS data from Eptium.",
   "keywords": [
     "jupyter",
