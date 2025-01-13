@@ -33,6 +33,7 @@ class Eptium(DOMWidget, ValueWidget):
 
     # read-write attributes
     src = Unicode('https://viewer.copc.io').tag(sync=True)
+    height = Unicode('400px').tag(sync=True)
 
     def __init__(
         self,
@@ -40,8 +41,34 @@ class Eptium(DOMWidget, ValueWidget):
     ):
         super().__init__()
         self.src = src
+        self.height
+
+    def set_height(self, value: int | str):
+        """Set the height of the Eptium View
+
+        Parameters
+        ----------
+        value : int | str
+            Accepted values are used to set the ``height`` attribute
+            of an iframe. 
+
+        Examples
+        --------
+        >>> widget.set_height('200px')
+        """
+        if isinstance(value, int):
+            value = str(value)
+        self.height = value
 
     def render(self, path: str | pathlib.Path):
+        """Method to call to generate the Eptium View
+
+        Parameters
+        ----------
+        path : str | pathlib.Path
+            Path to the asset that Eptium should display. Acceptable
+            values include local file paths, or URLs to 
+        """
         if isinstance(path, pathlib.Path):
             # not using os.fsdecode since we want forward-slashes
             # even on windows

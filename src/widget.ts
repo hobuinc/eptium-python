@@ -45,8 +45,10 @@ export class EptiumView extends DOMWidgetView {
   render() {
     this._iframe = document.createElement('iframe');
     this._iframe.width = '100%';
-    this._iframe.height = '400';
     this._iframe.style.boxSizing = 'border-box';
+
+    // Get the right right
+    this._onHeightChanged();
 
     // this.el is the DOM element associated with the view
     this.el.appendChild(this._iframe);
@@ -54,6 +56,7 @@ export class EptiumView extends DOMWidgetView {
 
     // Python -> TypeScript update
     this.model.on('change:src', this._onSrcChanged, this);
+    this.model.on('change:height', this._onHeightChanged, this);
   }
 
   private _onSrcChanged() {
@@ -61,5 +64,10 @@ export class EptiumView extends DOMWidgetView {
     this.model.widget_manager.resolveUrl(url).then((resolvedUrl) => {
       this._iframe.src = resolvedUrl;
     });
+  }
+
+  private _onHeightChanged() {
+    const height = this.model.get('height');
+    this._iframe.height = height;
   }
 }
