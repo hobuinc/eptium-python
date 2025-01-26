@@ -28,10 +28,12 @@ The example above shows a remote URL to a COPC file.  Inside jupyter, this exten
 ```python
 import eptium
 
-w.eptium.Eptium()
+w = eptium.Eptium()
 w.render("./path/to/file.copc.laz")
 w
 ```
+
+The `render` method supports other optional arguments to customize the view.  Run `help(w.render)` to see the possible options.
 
 Note: the local file functionality is not present in google colab.
 

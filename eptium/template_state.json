@@ -1,0 +1,693 @@
+{
+  "ramps": [
+    {
+      "id": "black-to-white",
+      "name": "Black to white",
+      "expression": "rgb( ${T} * 255, ${T} * 255, ${T} * 255 )"
+    },
+    {
+      "id": "blue-to-red",
+      "name": "Blue to red",
+      "expression": "rgb( max(0, cos((1 - ${T} - 2 / 6) * Math.PI)) * 255, max(0, cos((1 - ${T} - 3 / 6) * Math.PI)) * 255, max(0, cos((1 - ${T} - 4 / 6) * Math.PI)) * 255 )"
+    },
+    {
+      "id": "pink-to-yellow",
+      "name": "Pink to yellow",
+      "expression": "rgb( (${T} < 0.5 ? 1 - 2 * ${T} : 2 * ${T} - 1) * 255, (${T} < 0.5 ? 1.5 * ${T} : 0.5 + 0.5 * ${T}) * 255, (${T} < 0.5 ? 0.5 + (0.5 * (1 - ${T})) : 1.5 * (1 - ${T})) * 255 )"
+    }
+  ],
+  "groups": [
+    {
+      "isOpen": true,
+      "id": "927ce481-8b17-44d1-bdd3-542064feeb8e",
+      "name": "",
+      "isAttenuated": true,
+      "pointSize": 3,
+      "maximumScreenSpaceError": 16,
+      "geometricErrorScale": 1,
+      "edl": {
+        "isEnabled": true,
+        "radius": 0.8,
+        "strength": 2.4
+      },
+      "filters": [
+        {
+          "id": "return-number-range",
+          "name": "Return number",
+          "expression": "${ReturnNumber}",
+          "type": "continuous",
+          "extents": [
+            0,
+            7
+          ]
+        },
+        {
+          "id": "number-of-returns-range",
+          "name": "Number of returns",
+          "expression": "${NumberOfReturns}",
+          "type": "continuous",
+          "extents": [
+            0,
+            7
+          ]
+        },
+        {
+          "id": "scan-angle-range",
+          "name": "Scan angle",
+          "expression": "abs(${ScanAngle})",
+          "type": "continuous",
+          "extents": [
+            0,
+            90
+          ]
+        }
+      ],
+      "colorId": "elevation",
+      "colors": [
+        {
+          "id": "rgb",
+          "name": "RGB",
+          "type": "discrete",
+          "fixed": {
+            "type": "expression",
+            "expression": "${COLOR}"
+          }
+        },
+        {
+          "id": "elevation",
+          "name": "Elevation",
+          "type": "continuous",
+          "expression": "${Z}",
+          "rampId": "blue-to-red",
+          "extents": [
+            0,
+            0
+          ]
+        },
+        {
+          "id": "intensity",
+          "name": "Intensity",
+          "type": "continuous",
+          "expression": "${Intensity} < 256 ? ${Intensity} * 256 : ${Intensity}",
+          "rampId": "black-to-white",
+          "extents": [
+            0,
+            65535
+          ]
+        },
+        {
+          "id": "classification",
+          "name": "Classification",
+          "isFilter": true,
+          "type": "discrete",
+          "conditions": [
+            {
+              "id": "withheld",
+              "name": "Withheld",
+              "where": "${Withheld} === 1",
+              "color": {
+                "type": "hex",
+                "hex": "#ffff00"
+              }
+            },
+            {
+              "id": "never-classified",
+              "name": "Never classified",
+              "where": "${Classification} === 0",
+              "color": {
+                "type": "rgb",
+                "r": 238,
+                "g": 238,
+                "b": 238
+              }
+            },
+            {
+              "id": "unclassified",
+              "name": "Unclassified",
+              "where": "${Classification} === 1",
+              "color": {
+                "type": "rgb",
+                "r": 204,
+                "g": 204,
+                "b": 204
+              }
+            },
+            {
+              "id": "ground",
+              "name": "Ground",
+              "where": "${Classification} === 2",
+              "color": {
+                "type": "rgb",
+                "r": 139,
+                "g": 51,
+                "b": 38
+              }
+            },
+            {
+              "id": "low-noise",
+              "name": "Low noise",
+              "where": "${Classification} === 7",
+              "color": {
+                "type": "rgb",
+                "r": 232,
+                "g": 41,
+                "b": 7
+              }
+            },
+            {
+              "id": "high-noise",
+              "name": "High noise",
+              "where": "${Classification} === 18",
+              "color": {
+                "type": "rgb",
+                "r": 236,
+                "g": 49,
+                "b": 74
+              }
+            },
+            {
+              "id": "low-vegetation",
+              "name": "Low vegetation",
+              "where": "${Classification} === 3",
+              "color": {
+                "type": "rgb",
+                "r": 143,
+                "g": 201,
+                "b": 157
+              }
+            },
+            {
+              "id": "medium-vegetation",
+              "name": "Medium vegetation",
+              "where": "${Classification} === 4",
+              "color": {
+                "type": "rgb",
+                "r": 5,
+                "g": 159,
+                "b": 43
+              }
+            },
+            {
+              "id": "high-vegetation",
+              "name": "High vegetation",
+              "where": "${Classification} === 5",
+              "color": {
+                "type": "rgb",
+                "r": 47,
+                "g": 250,
+                "b": 11
+              }
+            },
+            {
+              "id": "building",
+              "name": "Building",
+              "where": "${Classification} === 6",
+              "color": {
+                "type": "rgb",
+                "r": 209,
+                "g": 151,
+                "b": 25
+              }
+            },
+            {
+              "id": "key-point",
+              "name": "Key point",
+              "where": "${Classification} === 8",
+              "color": {
+                "type": "rgb",
+                "r": 197,
+                "g": 0,
+                "b": 204
+              }
+            },
+            {
+              "id": "water",
+              "name": "Water",
+              "where": "${Classification} === 9",
+              "color": {
+                "type": "rgb",
+                "r": 26,
+                "g": 44,
+                "b": 240
+              }
+            },
+            {
+              "id": "overlap",
+              "name": "Overlap",
+              "where": "${Classification} === 12",
+              "color": {
+                "type": "rgb",
+                "r": 203,
+                "g": 210,
+                "b": 73
+              }
+            },
+            {
+              "id": "other",
+              "name": "Other",
+              "where": "true",
+              "color": {
+                "type": "hex",
+                "hex": "#ec5800"
+              }
+            }
+          ]
+        },
+        {
+          "id": "return-type",
+          "name": "Return type",
+          "type": "discrete",
+          "isFilter": true,
+          "filterIds": [
+            "return-number",
+            "number-of-returns"
+          ],
+          "conditions": [
+            {
+              "id": "only-returns",
+              "name": "Only",
+              "where": "${ReturnNumber} === 1 && ${NumberOfReturns} === 1",
+              "color": {
+                "type": "hex",
+                "hex": "#00ff00"
+              }
+            },
+            {
+              "id": "first-returns",
+              "name": "First",
+              "where": "${ReturnNumber} === 1 && ${NumberOfReturns} > 1",
+              "color": {
+                "type": "hex",
+                "hex": "#0000ff"
+              }
+            },
+            {
+              "id": "intermediate-returns",
+              "name": "Intermediate",
+              "where": " ${ReturnNumber} > 1 && ${NumberOfReturns} > 1 && ${ReturnNumber} < ${NumberOfReturns} ",
+              "color": {
+                "type": "hex",
+                "hex": "#ff00ff"
+              }
+            },
+            {
+              "id": "last-returns",
+              "name": "Last",
+              "where": "${NumberOfReturns} > 1 && ${ReturnNumber} === ${NumberOfReturns}",
+              "color": {
+                "type": "hex",
+                "hex": "#00ffff"
+              }
+            },
+            {
+              "id": "invalid-returns",
+              "name": "Invalid",
+              "where": "${ReturnNumber} === 0 || ${NumberOfReturns} === 0",
+              "color": {
+                "type": "hex",
+                "hex": "#ff0000"
+              }
+            }
+          ]
+        },
+        {
+          "id": "return-number",
+          "name": "Return number",
+          "type": "discrete",
+          "conditions": [
+            {
+              "id": "ReturnNumber-0",
+              "name": "0",
+              "where": "${ReturnNumber} % 8 === 0",
+              "color": {
+                "type": "hex",
+                "hex": "#4363d8"
+              }
+            },
+            {
+              "id": "ReturnNumber-1",
+              "name": "1",
+              "where": "${ReturnNumber} % 8 === 1",
+              "color": {
+                "type": "hex",
+                "hex": "#3cb44b"
+              }
+            },
+            {
+              "id": "ReturnNumber-2",
+              "name": "2",
+              "where": "${ReturnNumber} % 8 === 2",
+              "color": {
+                "type": "hex",
+                "hex": "#ffe119"
+              }
+            },
+            {
+              "id": "ReturnNumber-3",
+              "name": "3",
+              "where": "${ReturnNumber} % 8 === 3",
+              "color": {
+                "type": "hex",
+                "hex": "#911eb4"
+              }
+            },
+            {
+              "id": "ReturnNumber-4",
+              "name": "4",
+              "where": "${ReturnNumber} % 8 === 4",
+              "color": {
+                "type": "hex",
+                "hex": "#f58231"
+              }
+            },
+            {
+              "id": "ReturnNumber-5",
+              "name": "5",
+              "where": "${ReturnNumber} % 8 === 5",
+              "color": {
+                "type": "hex",
+                "hex": "#e6194B"
+              }
+            },
+            {
+              "id": "ReturnNumber-6",
+              "name": "6",
+              "where": "${ReturnNumber} % 8 === 6",
+              "color": {
+                "type": "hex",
+                "hex": "#42d4f4"
+              }
+            },
+            {
+              "id": "ReturnNumber-7",
+              "name": "7",
+              "where": "${ReturnNumber} % 8 === 7",
+              "color": {
+                "type": "hex",
+                "hex": "#f032e6"
+              }
+            }
+          ],
+          "filterIds": [
+            "return-number",
+            "number-of-returns"
+          ]
+        },
+        {
+          "id": "return-count",
+          "name": "Return count",
+          "type": "discrete",
+          "conditions": [
+            {
+              "id": "NumberOfReturns-0",
+              "name": "0",
+              "where": "${NumberOfReturns} % 8 === 0",
+              "color": {
+                "type": "hex",
+                "hex": "#4363d8"
+              }
+            },
+            {
+              "id": "NumberOfReturns-1",
+              "name": "1",
+              "where": "${NumberOfReturns} % 8 === 1",
+              "color": {
+                "type": "hex",
+                "hex": "#3cb44b"
+              }
+            },
+            {
+              "id": "NumberOfReturns-2",
+              "name": "2",
+              "where": "${NumberOfReturns} % 8 === 2",
+              "color": {
+                "type": "hex",
+                "hex": "#ffe119"
+              }
+            },
+            {
+              "id": "NumberOfReturns-3",
+              "name": "3",
+              "where": "${NumberOfReturns} % 8 === 3",
+              "color": {
+                "type": "hex",
+                "hex": "#911eb4"
+              }
+            },
+            {
+              "id": "NumberOfReturns-4",
+              "name": "4",
+              "where": "${NumberOfReturns} % 8 === 4",
+              "color": {
+                "type": "hex",
+                "hex": "#f58231"
+              }
+            },
+            {
+              "id": "NumberOfReturns-5",
+              "name": "5",
+              "where": "${NumberOfReturns} % 8 === 5",
+              "color": {
+                "type": "hex",
+                "hex": "#e6194B"
+              }
+            },
+            {
+              "id": "NumberOfReturns-6",
+              "name": "6",
+              "where": "${NumberOfReturns} % 8 === 6",
+              "color": {
+                "type": "hex",
+                "hex": "#42d4f4"
+              }
+            },
+            {
+              "id": "NumberOfReturns-7",
+              "name": "7",
+              "where": "${NumberOfReturns} % 8 === 7",
+              "color": {
+                "type": "hex",
+                "hex": "#f032e6"
+              }
+            }
+          ],
+          "filterIds": [
+            "return-number",
+            "number-of-returns"
+          ]
+        },
+        {
+          "id": "scan-angle",
+          "name": "Scan angle",
+          "type": "continuous",
+          "expression": "abs(${ScanAngle})",
+          "rampId": "blue-to-red",
+          "extents": [
+            0,
+            90
+          ],
+          "filterIds": [
+            "scan-angle-range"
+          ]
+        },
+        {
+          "id": "point-source-id",
+          "name": "Point source ID",
+          "type": "discrete",
+          "isFilter": true,
+          "conditions": [
+            {
+              "id": "PointSourceId-0",
+              "name": "0",
+              "where": "${PointSourceId} % 16 === 0",
+              "color": {
+                "type": "hex",
+                "hex": "#4363d8"
+              }
+            },
+            {
+              "id": "PointSourceId-1",
+              "name": "1",
+              "where": "${PointSourceId} % 16 === 1",
+              "color": {
+                "type": "hex",
+                "hex": "#3cb44b"
+              }
+            },
+            {
+              "id": "PointSourceId-2",
+              "name": "2",
+              "where": "${PointSourceId} % 16 === 2",
+              "color": {
+                "type": "hex",
+                "hex": "#ffe119"
+              }
+            },
+            {
+              "id": "PointSourceId-3",
+              "name": "3",
+              "where": "${PointSourceId} % 16 === 3",
+              "color": {
+                "type": "hex",
+                "hex": "#911eb4"
+              }
+            },
+            {
+              "id": "PointSourceId-4",
+              "name": "4",
+              "where": "${PointSourceId} % 16 === 4",
+              "color": {
+                "type": "hex",
+                "hex": "#f58231"
+              }
+            },
+            {
+              "id": "PointSourceId-5",
+              "name": "5",
+              "where": "${PointSourceId} % 16 === 5",
+              "color": {
+                "type": "hex",
+                "hex": "#e6194B"
+              }
+            },
+            {
+              "id": "PointSourceId-6",
+              "name": "6",
+              "where": "${PointSourceId} % 16 === 6",
+              "color": {
+                "type": "hex",
+                "hex": "#42d4f4"
+              }
+            },
+            {
+              "id": "PointSourceId-7",
+              "name": "7",
+              "where": "${PointSourceId} % 16 === 7",
+              "color": {
+                "type": "hex",
+                "hex": "#f032e6"
+              }
+            },
+            {
+              "id": "PointSourceId-8",
+              "name": "8",
+              "where": "${PointSourceId} % 16 === 8",
+              "color": {
+                "type": "hex",
+                "hex": "#bfef45"
+              }
+            },
+            {
+              "id": "PointSourceId-9",
+              "name": "9",
+              "where": "${PointSourceId} % 16 === 9",
+              "color": {
+                "type": "hex",
+                "hex": "#fabed4"
+              }
+            },
+            {
+              "id": "PointSourceId-10",
+              "name": "10",
+              "where": "${PointSourceId} % 16 === 10",
+              "color": {
+                "type": "hex",
+                "hex": "#469990"
+              }
+            },
+            {
+              "id": "PointSourceId-11",
+              "name": "11",
+              "where": "${PointSourceId} % 16 === 11",
+              "color": {
+                "type": "hex",
+                "hex": "#dcbeff"
+              }
+            },
+            {
+              "id": "PointSourceId-12",
+              "name": "12",
+              "where": "${PointSourceId} % 16 === 12",
+              "color": {
+                "type": "hex",
+                "hex": "#fffac8"
+              }
+            },
+            {
+              "id": "PointSourceId-13",
+              "name": "13",
+              "where": "${PointSourceId} % 16 === 13",
+              "color": {
+                "type": "hex",
+                "hex": "#800000"
+              }
+            },
+            {
+              "id": "PointSourceId-14",
+              "name": "14",
+              "where": "${PointSourceId} % 16 === 14",
+              "color": {
+                "type": "hex",
+                "hex": "#aaffc3"
+              }
+            },
+            {
+              "id": "PointSourceId-15",
+              "name": "15",
+              "where": "${PointSourceId} % 16 === 15",
+              "color": {
+                "type": "hex",
+                "hex": "#808000"
+              }
+            }
+          ]
+        },
+        {
+          "id": "fixed",
+          "name": "Fixed",
+          "type": "discrete",
+          "fixed": {
+            "type": "rgb",
+            "r": 0,
+            "g": 0,
+            "b": 255
+          }
+        }
+      ],
+      "resources": []
+    }
+  ],
+  "rasterGroups": [
+    {
+      "id": "a38a2e76-7117-49fc-b5a3-8b074938228a",
+      "name": "Rasters 1",
+      "colors": [
+        {
+          "id": "rgb",
+          "name": "RGB",
+          "type": "discrete",
+          "fixed": {
+            "type": "expression",
+            "expression": "${COLOR}"
+          }
+        },
+        {
+          "id": "continuous",
+          "name": "Continuous",
+          "type": "continuous",
+          "expression": "",
+          "rampId": "black-to-white",
+          "extents": [
+            0,
+            0
+          ]
+        }
+      ],
+      "colorId": "continuous",
+      "isOpen": true,
+      "rasters": []
+    }
+  ],
+  "isWireframeEnabled": false,
+  "densityMultiplier": 0.5
+}
