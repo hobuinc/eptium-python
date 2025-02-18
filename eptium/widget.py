@@ -134,14 +134,19 @@ class Eptium(DOMWidget, ValueWidget):
         # TODO: insert checks to ensure attribute is one of the supported ones
         self.state['groups'][0]['colorId'] = attribute
 
-    def _setColorRamp(self, ramp: str):
+    def _setPointCloudColorRamp(self, ramp: str):
         group = self.state['groups'][0]
         colors = group['colors']
         for color in colors:
             if color['id'] == group['colorId'] and color['type'] == 'continuous':
                 color['rampId'] = ramp
 
-
+    def _setRasterColorRamp(self, ramp: str):
+        group = self.state['rasterGroups'][0]
+        colors = group['colors']
+        for color in colors:
+            if color['id'] == group['colorId'] and color['type'] == 'continuous':
+                color['rampId'] = ramp
 
     def _addPath(self, path: str | pathlib.Path ):
         if isinstance(path, pathlib.Path):
@@ -183,10 +188,8 @@ class Eptium(DOMWidget, ValueWidget):
             path = f"{server['url']}files/{path}?{params}"
 
         # append resource 
-
-
         _, _, extension = path.rpartition(".")
-        if extension == "tif":
+        if extension.startswith("tif"):
             # geotiff
             resource = {
                 "id": str(uuid.uuid4()),
@@ -213,7 +216,8 @@ class Eptium(DOMWidget, ValueWidget):
         path: str | pathlib.Path | list[str | pathlib.Path],
         height: str | int = '600px',
         color_on: str = "elevation",
-        color_ramp: str | None = None,
+        color_ramp_pc: str | None = None,
+        color_ramp_raster: str | None = None,
         viewBounds: tuple[float, float, float, float] | None = None,
         wireFrame: bool = False
     ):
@@ -224,34 +228,61 @@ class Eptium(DOMWidget, ValueWidget):
         path : str | pathlib.Path
             Path to the asset that Eptium should display. Acceptable
             values include local file paths, or URLs to 
-        height : int | str
+        height : int | str, default='600px'
             Accepted values are used to set the ``height`` attribute
-            of an iframe.  Defaults to ``600px``.
-        color_on : str
+            of an iframe.
+        color_on : str, default='elevation'
             Attribute to set the coloring based off.  Possible values include
-              * rgb
-              * elevation (default)
-              * intensity
-              * classification
-              * return-type
-              * return-number
-              * return-count
-              * scan-angle
-              * post-source-id
-              * fixed
-        color_ramp : str
-            Color ramp to set the coloring based off.  Possible values include
-              * black-to-white
-              * blue-to-red
-              * pink-to-yellow
+              
+            * rgb
+            * elevation (default)
+            * intensity
+            * classification
+            * return-type
+            * return-number
+            * return-count
+            * scan-angle
+            * post-source-id
+            * fixed
+
+        color_ramp_pc : str
+            Color ramp to set the coloring for point clouds.  Possible values include
+
+            * viridis
+            * magma
+            * plasma
+            * inferno
+            * cividis
+            * turbo
+            * dem-screen
+            * usgs
+            * black-to-white
+            * blue-to-red
+            * pink-to-yellow
 
             Default value depends on what the ``color_on`` attribute is set to.
             This setting only applies to ``color_on`` attributes that are continuous.
             Those include
-              * elevation
-              * intensity
-              * scan-angle
-        viewBounds : (float, float, float, float), Optional
+
+            * elevation
+            * intensity
+            * scan-angle
+        color_ramp_raster : str, default='dem-screen'
+            Color ramp to set the coloring for rasters. Possible values include
+
+            * viridis
+            * magma
+            * plasma
+            * inferno
+            * cividis
+            * turbo
+            * dem-screen
+            * usgs
+            * black-to-white
+            * blue-to-red
+            * pink-to-yellow
+
+        viewBounds : (float, float, float, float), Optional, default=None
             Bounding box in EPSG:4326 to set the initial view to.  If not specified,
             view will center about the resource being displayed.
         wireFrame : bool, default False
@@ -264,9 +295,11 @@ class Eptium(DOMWidget, ValueWidget):
             self._addPath(path)
         self._setHeight(height)
         self._setColorOn(color_on)
-        if color_ramp is not None:
+        if color_ramp_pc is not None:
             # needs to happen after _setColorOn
-            self._setColorRamp(color_ramp)
+            self._setPointCloudColorRamp(color_ramp_pc)
+        if color_ramp_raster is not None:
+            self._setRasterColorRamp(color_ramp_raster)
         if viewBounds is not None:
             self._setBoundingGeometry(*viewBounds)
 

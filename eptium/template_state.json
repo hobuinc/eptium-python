@@ -1,21 +1,4 @@
 {
-  "ramps": [
-    {
-      "id": "black-to-white",
-      "name": "Black to white",
-      "expression": "rgb( ${T} * 255, ${T} * 255, ${T} * 255 )"
-    },
-    {
-      "id": "blue-to-red",
-      "name": "Blue to red",
-      "expression": "rgb( max(0, cos((1 - ${T} - 2 / 6) * Math.PI)) * 255, max(0, cos((1 - ${T} - 3 / 6) * Math.PI)) * 255, max(0, cos((1 - ${T} - 4 / 6) * Math.PI)) * 255 )"
-    },
-    {
-      "id": "pink-to-yellow",
-      "name": "Pink to yellow",
-      "expression": "rgb( (${T} < 0.5 ? 1 - 2 * ${T} : 2 * ${T} - 1) * 255, (${T} < 0.5 ? 1.5 * ${T} : 0.5 + 0.5 * ${T}) * 255, (${T} < 0.5 ? 0.5 + (0.5 * (1 - ${T})) : 1.5 * (1 - ${T})) * 255 )"
-    }
-  ],
   "groups": [
     {
       "isOpen": true,
