@@ -22,7 +22,6 @@ from urllib.parse import urlparse, urlencode
 
 from ipywidgets import DOMWidget, ValueWidget, register
 from traitlets import Unicode
-import pyproj
 
 import requests
 from jupyter_server import serverapp
@@ -60,75 +59,7 @@ class Eptium(DOMWidget, ValueWidget):
         self.height = value
 
     def _setBoundingGeometry(self, left, bottom, right, top):
-        # get the midpoint:
-        mid_x = statistics.mean([left, right])
-        mid_y = statistics.mean([top, bottom])
-
-        # figure out the height of the camera which has 60deg FOV
-    
-        # latitude degrees are roughly evenly spaced out so straight forward
-        # 1deg latitude = 111,320m
-        height = abs(top - bottom) * 111_320 
-
-        # 1deg longitude = 40,075,000m * cos(latitude) / 360
-        # for latitude we want to use the smaller absolute value
-        latitude = min(abs(top), abs(bottom))
-        width = abs(right - left) * (40_075_000 * math.cos(math.radians(latitude)) / 360)
-
-        # camera has a 60deg FOV
-        # we use 30deg for right triangle assumption and divide the diameter by 2
-        camera_view_diameter = max(height, width)
-        height = camera_view_diameter / (2 * math.tan(math.pi / 6))
-        
-        # add a fudge factor so we can see a little around the bounding box
-        height *= 1.1
-
-        # convert EPSG:4326 to cartesian
-        # EPSG:4979 is EPSG:4326 with 3D (height)
-        # EPSG:4978 is geocentric CRS 
-        transformation = pyproj.Transformer.from_crs(4979, 4978, always_xy=True)
-
-        # when using always_xy, longitude needs to go first
-        x, y, z = transformation.transform(mid_x, mid_y, height)
-
-        # direction of the camera should be straight "down"
-        # need to compute unit vector, start with computing the length
-        length = math.hypot(x, y, z)
-        dir_x = -x / length
-        dir_y = -y / length
-        dir_z = -z / length
-
-        # compute "up" direction, which should be towards the north pole
-        # north pole is at 0, 0, 6356752.314245179
-        # but cesium behavior seems to default to 2 * 6378137
-        up_reference = (0., 0., 2 * 6378137. )
-        d_x = up_reference[0] - x
-        d_y = up_reference[1] - y
-        d_z = up_reference[2] - z
-        length = math.hypot(d_x, d_y, d_z)
-        up_x = d_x / length
-        up_y = d_y / length
-        up_z = d_z / length
-
-        # need to convert bbox to camera position and "up" feature
-        camera = {
-            "position": [
-                x,
-                y,
-                z
-            ],
-            "direction": [
-                dir_x,
-                dir_y,
-                dir_z
-            ],
-            "up": [
-                up_x,
-                up_y,
-                up_z
-            ]
-        }
-        self.state['camera'] = camera
+        self.state["bbox"] = (left, bottom, right, top)
 
     def _setColorOn(self, attribute: str):
         # TODO: insert checks to ensure attribute is one of the supported ones
@@ -210,7 +141,6 @@ class Eptium(DOMWidget, ValueWidget):
             }
             self.state['groups'][0]['resources'].append(resource)
 
-
     def render(
         self,
         path: str | pathlib.Path | list[str | pathlib.Path],
@@ -246,7 +176,8 @@ class Eptium(DOMWidget, ValueWidget):
             * fixed
 
         color_ramp_pc : str
-            Color ramp to set the coloring for point clouds.  Possible values include
+            Color ramp to set the coloring for point clouds when coloring on
+            a continuous attribute.  Possible values include
 
             * viridis
             * magma
@@ -260,15 +191,9 @@ class Eptium(DOMWidget, ValueWidget):
             * blue-to-red
             * pink-to-yellow
 
-            Default value depends on what the ``color_on`` attribute is set to.
-            This setting only applies to ``color_on`` attributes that are continuous.
-            Those include
-
-            * elevation
-            * intensity
-            * scan-angle
         color_ramp_raster : str, default='dem-screen'
-            Color ramp to set the coloring for rasters. Possible values include
+            Color ramp to set the coloring for rasters when coloring on a
+            continuous attribute. Possible values include
 
             * viridis
             * magma
