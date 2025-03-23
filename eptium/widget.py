@@ -11,44 +11,22 @@ TODO: Add module docstring
 __all__ = ["Eptium"]
 
 import json
-import math
-
 import pathlib
+import sys
 import uuid
-import statistics
-from base64 import b64encode
 
+from base64 import b64encode
 from urllib.parse import urlparse, urlencode
 
-from ipywidgets import DOMWidget, ValueWidget, register
-from traitlets import Unicode
-
+from IPython.display import IFrame
 import requests
 from jupyter_server import serverapp
-from ._frontend import module_name, module_version
 
+class Eptium:
 
-@register
-class Eptium(DOMWidget, ValueWidget):
-    _model_name = Unicode('EptiumModel').tag(sync=True)
-    _model_module = Unicode(module_name).tag(sync=True)
-    _model_module_version = Unicode(module_version).tag(sync=True)
-
-    _view_name = Unicode('EptiumView').tag(sync=True)
-    _view_module = Unicode(module_name).tag(sync=True)
-    _view_module_version = Unicode(module_version).tag(sync=True)
-
-    # read-write attributes
-    src = Unicode('https://viewer.copc.io').tag(sync=True)
-    height = Unicode('600px').tag(sync=True)
-
-    def __init__(
-        self,
-        src="https://viewer.copc.io",
-    ):
-        super().__init__()
-        self.src = src
-        self.height
+    def __init__(self, server='https://viewer.copc.io'):
+        self.src = self.server = server.rstrip("/")
+        self.height = '600px'
         template_path = pathlib.Path(__file__).parent / "template_state.json"
         with open(template_path) as t:
             self.state = json.load(t)        
@@ -87,6 +65,8 @@ class Eptium(DOMWidget, ValueWidget):
         parsed_url = urlparse(path)
 
         if parsed_url.scheme not in ("https", "http"):
+            # construct a "local" URL
+
             # we're dealing with a local file and need to
             # construct a remote accessible URL
             # TODO: maybe the first server isn't the one we want?
@@ -112,7 +92,6 @@ class Eptium(DOMWidget, ValueWidget):
             params = urlencode({
                 'token': server['token'],
                 '_xsrf': r.cookies['_xsrf']
-
             })
 
             # path = f"https://viewer.copc.io/?q={server['url']}files/{path}?{params}"
@@ -232,7 +211,6 @@ class Eptium(DOMWidget, ValueWidget):
         self.state['isWireframeEnabled'] = wireFrame
         
         # determine the URL
-        state_hash = f"{b64encode(
-            json.dumps(self.state).encode('utf-8')
-        ).decode('utf-8')}"
-        self.src = f"https://viewer.copc.io/#{state_hash}"
+        state_hash = b64encode(json.dumps(self.state).encode('utf-8')).decode('utf-8')
+        self.src = f"{self.server}/#{state_hash}"
+        return IFrame(src=self.src, height=self.height, width='100%')
